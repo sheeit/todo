@@ -95,13 +95,11 @@ int main(int argc, char **argv)
         }
     }
 
-#if !defined(DEBUG) || (defined(DEBUG) && !DEBUG)
     todo_list_print();
 
     if (todo_list_dump_to_file() == 2)
-        fprintf(stderr, "todo_list_dump_to_file() returned 2.\nWriting the UTF-"
-                "8 BOM failed.\n");
-#endif /* not DEBUG */
+        fprintf(stderr, "todo_list_dump_to_file() returned 2.\nWriting the UTF"
+                "-8 BOM failed.\n");
 
     todo_list_destroy();
 

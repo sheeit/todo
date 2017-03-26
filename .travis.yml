@@ -1,0 +1,5 @@
+language: c
+compiler: gcc
+install: true
+before_script: touch dumpfile.txt
+script: ./configure && make

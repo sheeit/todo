@@ -25,7 +25,7 @@
 #define MAX_ITEMS (1 << 8)
 #define USE_PLAIN_ASCII 0
 #define MAX_LINE (1 << 16)
-#define DEBUG 0
+#define DEBUG 1
 
 #include <stdbool.h>
 

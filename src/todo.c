@@ -31,8 +31,9 @@ static int Current_item_in_malloced_array = 0;
 static char *Malloced_text[MAX_ITEMS] = {NULL};
 static int Current_item_in_malloced_text = 0;
 #if defined(DEBUG) && DEBUG
-static const char *Dump_filename = "/tmp/dumpfile.txt";
+static const char *Dump_filename = "dumpfile.txt";
 #else
+/* TODO: Make this a command-line option. */
 static const char *Dump_filename = "/home/strupo/.cache/todo/dumpfile.txt";
 #endif /* DEBUG */
 

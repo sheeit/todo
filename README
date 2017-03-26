@@ -35,23 +35,23 @@ to mark the fourth entry as done, or
 $ ./todo -v
 ```
 to show:
-    todo v0.0.1 Copyright &copy; 2017 strupo \<strupo AT autistici DOT org\>
+    todo v0.0.1 Copyright &copy; 2017 strupo &lt;strupo AT autistici DOT org&gt;
     This program comes with ABSOLUTELY NO WARRANTY; for details see the COPYING
     file that was distributed along with this program; or see
-    \<https://www.gnu.org/licenses/gpl-3.0.html\>
+    &lt;[GNU GPL](https://www.gnu.org/licenses/gpl.html)&gt;
 
 There's still a lot of work to do, and nothing is implemented yet, so
 suggestions are welcome!
 
 Contact
 -------
-Electronic mail: strupo \<AT\> autistici \<DOT\> org
+Electronic mail: strupo &lt;AT&gt; autistici &lt;DOT&gt; org
 
 License
 -------
 
 todo -- Create, list, and manage a todo list.
-Copyright &copy; 2017 strupo \<strupo AT autistici DOT org\>
+Copyright &copy; 2017 strupo &lt;strupo AT autistici DOT org&gt;
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -64,4 +64,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see \<http://www.gnu.org/licenses/\>.
+along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.

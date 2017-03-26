@@ -28,17 +28,21 @@
 *.x86_64
 *.hex
 
+/src/todo
+/src/.deps
+
 # Debug files
 *.dSYM/
 *.su
 
 
-# The following is the  Autotools .gitignore
+# The following is a modified version of the Autotools .gitignore
 # from <https://github.com/github/gitignore/blob/master/Autotools.gitignore>
 
 # http://www.gnu.org/software/automake
 
 Makefile.in
+Makefile
 /ar-lib
 /mdate-sh
 /py-compile
@@ -53,9 +57,13 @@ Makefile.in
 /aclocal.m4
 /compile
 /config.guess
+/config.h
 /config.h.in
+/config.log
 /config.sub
-/configure
+/config.status
+# We want to include configure in our repo, and not the Makefile
+#/configure
 /configure.scan
 /depcomp
 /install-sh

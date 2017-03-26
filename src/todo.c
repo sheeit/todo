@@ -205,7 +205,7 @@ int todo_list_read_dump_file(void)
         return 1;
     }
 
-    while ( ( fgets(line, sizeof(line), dumpfile) ) != NULL ) {
+    while ((fgets(line, sizeof(line), dumpfile)) != NULL ) {
         if (line[0] == '\f'
             || (line[0] == '\xEF' && line[1] == '\xBB' && line[2] == '\xBF')) {
             /* Skip the line if it contains the UTF-8 Byte Order Mark or a form
@@ -240,6 +240,7 @@ int todo_list_read_dump_file(void)
         }
     }
 
+    fclose(dumpfile);
 
     return 0;
 }

@@ -7,7 +7,7 @@ reminders for myself for things that I should do.
 It'll go somehow like this:
 
 ```
-$ ./todo -a 'Do this thing that you hav to do.'
+$ ./todo -a 'Do this thing that you have to do.'
 ```
 to add a new entry to your todo; or
 

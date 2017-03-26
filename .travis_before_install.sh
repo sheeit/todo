@@ -102,6 +102,7 @@ install_from_source() {
     for sourcedir in ${SOURCEDIRS}; do
         build_package_from_source './dependencies/build/'"${sourcedir}"       \
             './dependencies/usr'
+    done;
     if [ "${?}" -eq 0 ]; then
         export OLD_PATH="${PATH}";
         export PATH='./dependencies/usr/bin:'"${PATH}";

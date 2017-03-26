@@ -6,40 +6,52 @@ anything as of now), but once finished, it'll allow me to add notes or
 reminders for myself for things that I should do.
 It'll go somehow like this:
 
+```
 $ ./todo -a 'Do this thing that you hav to do.'
+```
 to add a new entry to your todo; or
 
+```
 $ ./todo -l
+```
 to list all your undone things that you should be doing, or
 
+```
 $ ./todo -l all
+```
 to list all your things to do including things you've already done, or
 
+```
 $ ./todo -l 4
+```
 to list information about the entry number 4 on your todo list, or
 
+```
 $ ./todo -d 4
+```
 to mark the fourth entry as done, or
 
+```
 $ ./todo -v
+```
 to show:
-todo v0.0.1 Copyright (C) 2017 strupo <strupo AT autistici DOT org>
-This program comes with ABSOLUTELY NO WARRANTY; for details see the COPYING
-file that was distributed along with this program; or see
-<http://www.gnu.org/licenses/gpl3>
+    todo v0.0.1 Copyright &copy; 2017 strupo \<strupo AT autistici DOT org\>
+    This program comes with ABSOLUTELY NO WARRANTY; for details see the COPYING
+    file that was distributed along with this program; or see
+    \<https://www.gnu.org/licenses/gpl-3.0.html\>
 
 There's still a lot of work to do, and nothing is implemented yet, so
 suggestions are welcome!
 
 Contact
-=======
-Electronic mail: strupo <AT> autistici <DOT> org
+-------
+Electronic mail: strupo \<AT\> autistici \<DOT\> org
 
 License
-=======
+-------
 
 todo -- Create, list, and manage a todo list.
-Copyright (C) 2017 strupo <strupo AT autistici DOT org>
+Copyright &copy; 2017 strupo \<strupo AT autistici DOT org\>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -52,4 +64,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+along with this program.  If not, see \<http://www.gnu.org/licenses/\>.

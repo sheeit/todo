@@ -35,6 +35,7 @@ to mark the fourth entry as done, or
 $ ./todo -v
 ```
 to show:
+
     todo v0.0.1 Copyright &copy; 2017 strupo &lt;strupo AT autistici DOT org&gt;
     This program comes with ABSOLUTELY NO WARRANTY; for details see the COPYING
     file that was distributed along with this program; or see

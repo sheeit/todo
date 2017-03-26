@@ -17,7 +17,7 @@
 #printf "New Autoconf version: ${AUTOCONF_VERSION}\n" && unset AUTOCONF_VERSION
 
 prepare_dependencies_dir() {
-    mkdir -p dependencies{,build};
+    mkdir -p dependencies{,/build};
 }
 download_source_tarballs() {
     URLS='

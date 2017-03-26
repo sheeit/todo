@@ -4,7 +4,7 @@
  * "todo" is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *(at your option) any later version.
  *
  * "todo" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -48,27 +48,27 @@ typedef struct todo_list todo_list;
 
 /* Function prototypes */
 
-void do_nothing (void);
+void do_nothing(void);
 
-todo_list *todo_list_add (const char *text);
+todo_list *todo_list_add(const char *text);
 
-void todo_list_print (void);
+void todo_list_print(void);
 
-void todo_list_destroy (void);
+void todo_list_destroy(void);
 
-void todo_list_done (todo_list *item);
+void todo_list_done(todo_list *item);
 
-int todo_list_dump_to_file (void);
+int todo_list_dump_to_file(void);
 
-int todo_list_read_dump_file (void);
+int todo_list_read_dump_file(void);
 
-void todo_list_toggle_done (int itemnum);
+void todo_list_toggle_done(int itemnum);
 
-todo_list *todo_list_get_nth_item (int itemnum);
+todo_list *todo_list_get_nth_item(int itemnum);
 
-void todo_list_print_nth_item (int itemnum);
+void todo_list_print_nth_item(int itemnum);
 
-void todo_list_remove_nth_item (int itemnum);
+void todo_list_remove_nth_item(int itemnum);
 
 
 #endif /* TODO_H */

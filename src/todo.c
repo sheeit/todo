@@ -100,10 +100,10 @@ static void todo_list_print_internal(todo_list *list_item, int n)
     return;
 }
 
-void todo_list_destroy (void)
+void todo_list_destroy(void)
 {
     int i;
-    
+
     for (i = 0; i < Current_item_in_malloced_array; ++i) {
         free((void *) (Malloced_array[i]));
     }
@@ -134,7 +134,7 @@ int todo_list_dump_to_file(void)
         return 1;
     }
 
-    
+
     utf8_bom[0x00] = (unsigned char) 0xEF;
     utf8_bom[0x01] = (unsigned char) 0xBB;
     utf8_bom[0x02] = (unsigned char) 0xBF;
@@ -161,7 +161,7 @@ int todo_list_dump_to_file(void)
 
     ret = (fwrite(utf8_bom, 1, (size_t) 0x1BLU, dumpfile) == (size_t) 0x1BLU)
             ? 0 : 2;
-    
+
     free((void *) utf8_bom);
 
     if (First != NULL)
@@ -182,7 +182,7 @@ static void todo_list_dump_file_internal(todo_list *item, FILE *dumpfile)
     return;
 }
 
-void todo_list_done (todo_list *item)
+void todo_list_done(todo_list *item)
 {
     item->done = !item->done;
 
@@ -247,7 +247,7 @@ int todo_list_read_dump_file(void)
 static size_t chomp(char *str)
 {
     size_t len;
-    
+
     for (len = 0; str[len] != '\n'; ++len)
         continue;
 
@@ -290,7 +290,7 @@ static todo_list *todo_list_get_nth_item_internal(todo_list *item, int itemnum)
     return nth_item;
 }
 
-void todo_list_toggle_done (int itemnum)
+void todo_list_toggle_done(int itemnum)
 {
     todo_list *item = todo_list_get_nth_item(itemnum);
 
@@ -301,17 +301,25 @@ void todo_list_toggle_done (int itemnum)
     return;
 }
 
-void todo_list_print_nth_item (int itemnum)
+void todo_list_print_nth_item(int itemnum)
 {
     todo_list *item = todo_list_get_nth_item(itemnum);
 
     if (item)
-        fprintf(stderr, "todo_list_print_nth_item():\n%s\n", item->text);
-
+        printf("\033[0;34m%d\033[0m [%s] %s\n",
+                itemnum,
+#if defined USE_PLAIN_ASCII && USE_PLAIN_ASCII
+                item->done ? "x" : " ",
+#else
+                item->done
+                ? "\033[0;32m\xE2\x9C\x93\033[0m"
+                : "\033[0;31m\xE2\x9C\x97\033[0m",
+#endif /* USE_PLAIN_ASCII */
+                item->text);
     return;
 }
 
-void todo_list_remove_nth_item (int itemnum)
+void todo_list_remove_nth_item(int itemnum)
 {
     /* TODO */
 

@@ -30,6 +30,7 @@ int main(int argc, char **argv)
     int i;
     int item_to_process;
     bool ignore = false;
+    bool print_all = true;
     todo_list *last_item = NULL;
 
     if (todo_list_read_dump_file() != 0) {
@@ -60,6 +61,7 @@ int main(int argc, char **argv)
             /* argv[i][0] == '-' */
             if (isdigit(argv[i][1])) {
                 item_to_process = atoi(*(argv + i) + 1);
+                print_all = false;
                 todo_list_print_nth_item(item_to_process);
             } else if (argv[i][1] == 'r') {
                 /* r == remove */
@@ -95,7 +97,8 @@ int main(int argc, char **argv)
         }
     }
 
-    todo_list_print();
+    if (print_all)
+        todo_list_print();
 
     if (todo_list_dump_to_file() == 2)
         fprintf(stderr, "todo_list_dump_to_file() returned 2.\nWriting the UTF"

@@ -7,7 +7,7 @@ before_install:
     - . ./.travis_before_install.sh
 install: true
 before_script: touch dumpfile.txt
-script: autoreconf -iv && ./configure && make
+script: autoreconf -iv && ./configure && make && sudo make install
 after_success:
     - todo Test\' todo
     - todo -t 1

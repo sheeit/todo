@@ -124,7 +124,6 @@ void do_nothing(void)
 int todo_list_dump_to_file(void)
 {
     FILE *dumpfile;
-    todo_list *item;
     unsigned char * const utf8_bom = (unsigned char *) malloc((size_t) 0x1ALU);
     int ret = 0;
 
@@ -315,5 +314,10 @@ void todo_list_print_nth_item (int itemnum)
 void todo_list_remove_nth_item (int itemnum)
 {
     /* TODO */
+
+    /* This is just so the this would compile with -Wall -Wextra */
+    if (itemnum)
+        do_nothing();
+
     return;
 }

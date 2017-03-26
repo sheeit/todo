@@ -2,18 +2,9 @@ language: c
 compiler: gcc
 sudo: required
 before_install:
-    - old_cwd="$(realpath .)"
-    - mkdir -p dependencies{,/{build,usr}} && cd dependencies/build && pwd
-    - wget 'http://ftp.gnu.org/gnu/autoconf/autoconf-latest.tar.gz'
-    - tar -xzf 'autoconf-latest.tar.gz'
-    - cd autoconf-*
-    - ./configure --prefix="$(realpath ../../usr)" && make && make check
-    - make install
-    - export PATH="$(realpath ../../usr/bin):${PATH}"
-    - cd "${old_cwd}" && unset old_cwd
-    - printf 'Old Autoconf version: %s\n' "${AUTOCONF_VERSION}"
-    - AUTOCONF_VERSION="$(autoconf -V | grep -Eo 'autoconf \(GNU Autoconf\) ([[:digit:]\.])+' | sed -e 's/[^0-9\.]\+//g')"
-    - printf 'New Autoconf version: %s\n' "${AUTOCONF_VERSION}"
+    - sudo apt-get -qq update
+    - sudo apt-get install automake autotools-dev diffutils help2man gawk
+    - . ./.travis_before_install.sh
 install: true
 before_script: touch dumpfile.txt
 script: autoreconf -iv && ./configure && make

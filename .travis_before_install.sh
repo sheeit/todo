@@ -17,7 +17,7 @@
 #printf "New Autoconf version: ${AUTOCONF_VERSION}\n" && unset AUTOCONF_VERSION
 
 prepare_dependencies_dir() {
-    mkdir -p dependencies{,/{build,usr}};
+    mkdir -p dependencies{,build};
 }
 download_source_tarballs() {
     URLS='
@@ -101,16 +101,15 @@ install_from_source() {
     popd
     for sourcedir in ${SOURCEDIRS}; do
         build_package_from_source './dependencies/build/'"${sourcedir}"       \
-            './dependencies/usr'
+            '/usr/local'
     done;
     if [ "${?}" -eq 0 ]; then
         export OLD_PATH="${PATH}";
-        export PATH='./dependencies/usr/bin:'"${PATH}";
+        export PATH='/usr/local/bin:'"${PATH}";
         export OLD_LIBRARY_PATH="${LIBRARY_PATH}";
-        export LIBRARY_PATH='./dependencies/usr/lib:/usr/local/lib:/usr/lib';
+        export LIBRARY_PATH='/usr/local/lib:/usr/lib';
         export OLD_CPATH="${CPATH}";
-        export CPATH='./dependencies/usr/include:/usr/local/include:/usr/incl'\
-'ude';
+        export CPATH='/usr/local/include:/usr/include';
     fi;
     unset TARBALLS;
     unset SOURCEDIRS;

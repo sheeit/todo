@@ -3,7 +3,7 @@ compiler: gcc
 sudo: required
 before_install:
     - sudo apt-get -qq update
-    - sudo apt-get -y install autoconf automake autotools
+    - sudo apt-get -y install autoconf automake autotools-dev
 install: true
 before_script: touch dumpfile.txt
 script: autoreconf -iv && ./configure && make

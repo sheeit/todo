@@ -69,20 +69,20 @@ build_package_from_source() {
         mkdir -p "${2}";
     fi;
     if [ -x './configure' ]; then
-        ./configure --prefix="${2}";
+        ./configure --prefix="${2}" 1>/dev/null 2>&1;
     else
         printf 'build_package_from_source(): No configure script in %s\n'     \
             "${1}";
         return 1;
     fi;
     if [ -f 'Makefile' ]; then
-        make;
+        make -s 1>/dev/null 2>&1;
     else
         printf 'build_package_from_source(): configure seems to have failed%s'\
             '; no Makefile present.\n';
         return 1;
     fi;
-    sudo make install;
+    sudo make -s install 1>/dev/null 2>&1;
     popd;
 }
 install_from_source() {

@@ -9,6 +9,6 @@ install: true
 before_script: touch dumpfile.txt
 script: autoreconf -iv && ./configure && make && sudo make install
 after_success:
-    - todo Test\' todo
+    - todo Test\ todo
     - todo -t 1
     - cat dumpfile.txt

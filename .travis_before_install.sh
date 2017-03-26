@@ -82,7 +82,7 @@ build_package_from_source() {
             '; no Makefile present.\n';
         return 1;
     fi;
-    make install;
+    sudo make install;
     popd;
 }
 install_from_source() {

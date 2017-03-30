@@ -30,7 +30,7 @@
 # define USE_PLAIN_ASCII 1
 #endif
 #define MAX_LINE (1 << 16)
-#define DEBUG 0
+#define DEBUG 1
 
 #include <stdbool.h>
 

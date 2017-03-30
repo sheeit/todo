@@ -23,9 +23,11 @@
 /* Symbolic constants */
 
 #define MAX_ITEMS (1 << 8)
-#define USE_PLAIN_ASCII 0
 #ifdef WIN32
 # define NO_COLORS 1
+/* I don't know how Windows handles Unicode, but it doesn't use UTF-8,
+ * so fuck it. */
+# define USE_PLAIN_ASCII 1
 #endif
 #define MAX_LINE (1 << 16)
 #define DEBUG 0

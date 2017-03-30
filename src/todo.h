@@ -24,8 +24,11 @@
 
 #define MAX_ITEMS (1 << 8)
 #define USE_PLAIN_ASCII 0
+#ifdef WIN32
+# define NO_COLORS 1
+#endif
 #define MAX_LINE (1 << 16)
-#define DEBUG 1
+#define DEBUG 0
 
 #include <stdbool.h>
 

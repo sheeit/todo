@@ -30,7 +30,7 @@ static todo_list *Malloced_array[MAX_ITEMS] = {NULL};
 static int Current_item_in_malloced_array = 0;
 static char *Malloced_text[MAX_ITEMS] = {NULL};
 static int Current_item_in_malloced_text = 0;
-#if defined(DEBUG) && DEBUG
+#if (defined(DEBUG) && DEBUG) || defined(WIN32)
 static const char *Dump_filename = "dumpfile.txt";
 #else
 /* TODO: Make this a command-line option. */
@@ -84,14 +84,34 @@ void todo_list_print(void)
 
 static void todo_list_print_internal(todo_list *list_item, int n)
 {
-    printf("\033[0;34m%2d\033[0m %s %s\n",
+    printf("%s%2d%s [%s] %s\n",
+#if defined(NO_COLORS) && NO_COLORS
+            "",
+#else
+            "\033[0;34m",
+#endif /* NO_COLORS */
             n,
-#if defined USE_PLAIN_ASCII && USE_PLAIN_ASCII
-            list_item->done ? "[x]" : "[ ]",
+#if defined(NO_COLORS) && NO_COLORS
+            "",
+#else
+            "\033[0m",
+#endif /* NO_COLORS */
+#if defined(USE_PLAIN_ASCII) && USE_PLAIN_ASCII
+            list_item->done ? "x" : " ",
 #else
             list_item->done
-            ? "[\033[0;32m\xE2\x9C\x93\033[0m]"
-            : "[\033[0;31m\xE2\x9C\x97\033[0m]",
+            ?
+# if defined(NO_COLORS) && NO_COLORS
+            "\xE2\x9C\x93"
+# else
+            "\033[0;31m\xE2\x9C\x97\033[0m",
+# endif /* NO_COLORS */
+            :
+# if defined(NO_COLORS) && NO_COLORS
+            "\xE2\x9C\x97",
+# else
+            "\033[0;31m\xE2\x9C\x97\033[0m",
+# endif /* NO_COLORS */
 #endif /* USE_PLAIN_ASCII */
             list_item->text);
     if (list_item != Last) {

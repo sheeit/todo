@@ -229,7 +229,7 @@ int todo_list_read_dump_file(void)
         if (line[0] == '\f'
             || (line[0] == '\xEF' && line[1] == '\xBB' && line[2] == '\xBF')) {
             /* Skip the line if it contains the UTF-8 Byte Order Mark or a form
-             * feed, which will be eventually used to seperate items.
+             * feed, which will be eventually used to separate items.
              */
             continue;
         } else {

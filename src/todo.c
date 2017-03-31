@@ -80,10 +80,12 @@ void todo_list_print_one_item(todo_list *item, int n)
 #if defined(NO_COLORS) && NO_COLORS
     const char *color_1 = "";
     const char *color_2 = "";
+    const char *color_3 = "";
     const char *color_end = "";
 #else
     const char *color_1 = "\033[0;34m";
     const char *color_2 = "\033[0;31m";
+    const char *color_3 = "\033[0;32m";
     const char *color_end = "\033[0m";
 #endif /* NO_COLORS */
 #if defined(USE_PLAIN_ASCII) && USE_PLAIN_ASCII
@@ -97,7 +99,9 @@ void todo_list_print_one_item(todo_list *item, int n)
     if (item)
         printf(printf_string,
                 color_1, n, color_end,
-                color_2, item->done ? done : undone, color_end,
+                item->done ? color_3 : color_2,
+                    item->done ? done : undone,
+                color_end,
                 item->text);
 
     return;

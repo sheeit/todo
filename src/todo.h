@@ -23,8 +23,13 @@
 /* Symbolic constants */
 
 #define MAX_ITEMS (1 << 8)
-#define NO_COLORS 0
-#define USE_PLAIN_ASCII 0
+#ifdef WIN32
+# define NO_COLORS 1
+# define USE_PLAIN_ASCII 1
+#else
+# define NO_COLORS 0
+# define USE_PLAIN_ASCII 0
+#endif
 #define MAX_LINE (1 << 16)
 #define DEBUG 1
 

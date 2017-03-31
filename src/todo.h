@@ -23,12 +23,8 @@
 /* Symbolic constants */
 
 #define MAX_ITEMS (1 << 8)
-#ifdef WIN32
-# define NO_COLORS 1
-/* I don't know how Windows handles Unicode, but it doesn't use UTF-8,
- * so fuck it. */
-# define USE_PLAIN_ASCII 1
-#endif
+#define NO_COLORS 0
+#define USE_PLAIN_ASCII 0
 #define MAX_LINE (1 << 16)
 #define DEBUG 1
 
@@ -58,6 +54,8 @@ void do_nothing(void);
 todo_list *todo_list_add(const char *text);
 
 void todo_list_print(void);
+
+void todo_list_print_one_item(todo_list *item, int n);
 
 void todo_list_destroy(void);
 

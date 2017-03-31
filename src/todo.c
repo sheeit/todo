@@ -74,6 +74,35 @@ todo_list *todo_list_add(const char *text)
     return item;
 }
 
+void todo_list_print_one_item(todo_list *item, int n)
+{
+    const char printf_string[] = "%s%2d%s [%s%s%s] %s\n";
+#if defined(NO_COLORS) && NO_COLORS
+    const char *color_1 = "";
+    const char *color_2 = "";
+    const char *color_end = "";
+#else
+    const char *color_1 = "\033[0;34m";
+    const char *color_2 = "\033[0;31m";
+    const char *color_end = "\033[0m";
+#endif /* NO_COLORS */
+#if defined(USE_PLAIN_ASCII) && USE_PLAIN_ASCII
+    const char *done = "x";
+    const char *undone = "x";
+#else
+    const char *done = "\xE2\x9C\x93";
+    const char *undone = "\xE2\x9C\x97";
+#endif /* USE_PLAIN_ASCII */
+
+    if (item)
+        printf(printf_string,
+                color_1, n, color_end,
+                color_2, item->done ? done : undone, color_end,
+                item->text);
+
+    return;
+}
+
 void todo_list_print(void)
 {
     if (First)
@@ -84,39 +113,11 @@ void todo_list_print(void)
 
 static void todo_list_print_internal(todo_list *list_item, int n)
 {
-    printf("%s%2d%s [%s] %s\n",
-#if defined(NO_COLORS) && NO_COLORS
-            "",
-#else
-            "\033[0;34m",
-#endif /* NO_COLORS */
-            n,
-#if defined(NO_COLORS) && NO_COLORS
-            "",
-#else
-            "\033[0m",
-#endif /* NO_COLORS */
-#if defined(USE_PLAIN_ASCII) && USE_PLAIN_ASCII
-            list_item->done ? "x" : " ",
-#else
-            list_item->done
-            ?
-# if defined(NO_COLORS) && NO_COLORS
-            "\xE2\x9C\x93"
-# else
-            "\033[0;31m\xE2\x9C\x97\033[0m",
-# endif /* NO_COLORS */
-            :
-# if defined(NO_COLORS) && NO_COLORS
-            "\xE2\x9C\x97",
-# else
-            "\033[0;31m\xE2\x9C\x97\033[0m",
-# endif /* NO_COLORS */
-#endif /* USE_PLAIN_ASCII */
-            list_item->text);
-    if (list_item != Last) {
+    todo_list_print_one_item(list_item, n);
+
+    if (list_item != Last)
         todo_list_print_internal(list_item->next, n + 1);
-    }
+
     return;
 }
 
@@ -124,13 +125,11 @@ void todo_list_destroy(void)
 {
     int i;
 
-    for (i = 0; i < Current_item_in_malloced_array; ++i) {
+    for (i = 0; i < Current_item_in_malloced_array; ++i)
         free((void *) (Malloced_array[i]));
-    }
 
-    for (i = 0; i < Current_item_in_malloced_text; ++i) {
+    for (i = 0; i < Current_item_in_malloced_text; ++i)
         free((void *) (Malloced_text[i]));
-    }
 
     return;
 }
@@ -327,16 +326,8 @@ void todo_list_print_nth_item(int itemnum)
     todo_list *item = todo_list_get_nth_item(itemnum);
 
     if (item)
-        printf("\033[0;34m%d\033[0m [%s] %s\n",
-                itemnum,
-#if defined USE_PLAIN_ASCII && USE_PLAIN_ASCII
-                item->done ? "x" : " ",
-#else
-                item->done
-                ? "\033[0;32m\xE2\x9C\x93\033[0m"
-                : "\033[0;31m\xE2\x9C\x97\033[0m",
-#endif /* USE_PLAIN_ASCII */
-                item->text);
+        todo_list_print_one_item(item, itemnum);
+
     return;
 }
 

@@ -154,6 +154,7 @@ int todo_list_dump_to_file(void)
     if (dumpfile == NULL) {
         fprintf(stderr, "todo_list_dump_to_file(): Unable to open dumpfile %s "
                 "for writing.\n", Dump_filename);
+        free(utf8_bom);
         return 1;
     }
 
@@ -237,7 +238,7 @@ int todo_list_read_dump_file(void)
             continue;
         } else {
             /* Chomping the line to remove the trailing newline */
-            len = chomp(line);
+            (void) chomp(line);
 
             if (line[1] == 'x')
                 done = true;

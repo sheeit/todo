@@ -237,15 +237,14 @@ int todo_list_read_dump_file(void)
              */
             continue;
         } else {
-            /* Chomping the line to remove the trailing newline */
-            (void) chomp(line);
-
             if (line[1] == 'x')
                 done = true;
             else
                 done = false;
 
-            len = strlen(&line[4]);
+            (void) chomp(line);
+
+            len = strlen(&line[4]) + 1;
 
             text = malloc(len);
             if (text == NULL) {
@@ -253,7 +252,6 @@ int todo_list_read_dump_file(void)
             }
 
             strncpy(text, &line[4], len);
-
 
             Malloced_text[Current_item_in_malloced_text] = text;
             ++Current_item_in_malloced_text;

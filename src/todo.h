@@ -31,7 +31,6 @@
 # define USE_PLAIN_ASCII 0
 #endif
 #define MAX_LINE (1 << 16)
-#define DEBUG 1
 
 #include <stdbool.h>
 

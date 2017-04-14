@@ -19,11 +19,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 
 #include "todo.h"
 #include "../config.h"
 
-void check_for_v(char **argv);
+void check_for_v(int argc, const char * const *argv);
 
 int main(int argc, char **argv)
 {
@@ -33,6 +34,8 @@ int main(int argc, char **argv)
     bool print_all = true;
     todo_list *last_item = NULL;
 
+    check_for_v(argc - 1, (const char * const *) argv + 1);
+
     if (todo_list_read_dump_file() != 0) {
         /* TODO:
          * if dump_file doesn't exist; then create it.
@@ -41,6 +44,9 @@ int main(int argc, char **argv)
         abort();
     }
 
+    /* TODO: replace all this shit with a parser function that does it better
+     * and in an elegant way. This right here is shit.
+     */
     for (i = 1; i < argc; ++i) {
         if (ignore) {
             ignore = false;
@@ -109,18 +115,18 @@ int main(int argc, char **argv)
     exit(EXIT_SUCCESS);
 }
 
-void check_for_v(char **argv)
+void check_for_v(int argc, const char * const *argv)
 {
     void print_copyright_info(void);
-    char *s = *argv;
+    const char *s;
 
-    while(s != NULL) {
-        s = *argv;
-        if (s[0] == '-' && s[1] == 'v') {
+    while (argc--) {
+        s = *argv++;
+        if (s[0] == '-'
+                && (s[1] == 'v' || !strncmp(s + 1, "-version", (size_t) 8u))) {
             print_copyright_info();
             exit(EXIT_SUCCESS);
         }
-        ++argv;
     }
 
     return;

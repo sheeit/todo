@@ -1,58 +1,43 @@
 #!/usr/bin/env sh
 
-#old_cwd="$(realpath .)"
-#AUTOCONF_VERSION="$(autoconf -V | grep -Eo 'autoconf \(GNU Autoconf\) ([[:dig'\
-#'it:]\.])+' | sed -e 's/[^0-9\.]\+//g')"
-#mkdir -p dependencies{,/{build,usr}} && cd dependencies/build && pwd
-#wget 'http://ftp.gnu.org/gnu/autoconf/autoconf-latest.tar.gz'
-#tar -xzf 'autoconf-latest.tar.gz'
-#cd autoconf-2*
-#./configure --prefix="$(realpath ../../usr)" && make # && make check && \
-#make install
-#export PATH="$(realpath ../../usr/bin):${PATH}"
-#cd "${old_cwd}" && unset old_cwd
-#printf "Old Autoconf version: ${AUTOCONF_VERSION}\n" 
-#AUTOCONF_VERSION="$(autoconf -V | grep -Eo 'autoconf \(GNU Autoconf\) ([[:dig'\
-#'it:]\.])+' | sed -e 's/[^0-9\.]\+//g')"
-#printf "New Autoconf version: ${AUTOCONF_VERSION}\n" && unset AUTOCONF_VERSION
-
 prepare_dependencies_dir() {
-    mkdir -p dependencies{,/build};
+    mkdir -p dependencies dependencies/build;
 }
 download_source_tarballs() {
     URLS='
         http://ftp.gnu.org/gnu/autoconf/autoconf-latest.tar.gz
         http://ftp.gnu.org/gnu/coreutils/coreutils-8.27.tar.xz
     ';
-    pushd dependencies/build;
+    old_pwd="$(pwd)";
+    cd dependencies/build || exit;
     for url in ${URLS}; do
         wget "${url}";
     done;
-    popd;
-    unset URLS;
+    cd "${old_pwd}" || exit;
+    unset old_pwd URLS;
 }
 extract() {
     if [ -z "${1}" ]; then
         printf 'Usage: extract file\n';
         return 1;
     fi;
-    ext="$(printf '%s' "${1}" | sed -e 's/^.*\.\([^\.]\+\)$/\1/g')"
+    ext="$(printf '%s' "${1}" | sed -e 's/^.*\.\([^\.]\+\)$/\1/g')";
     printf 'File %s\t ext=%s\n' "${1}" "${ext}";
-    if [ "${ext}" = 'gz' ] || [ "${ext}" = 'tgz' ]; then
-        tar -xzf "${1}";
-    elif [ "${ext}" = 'bz2' ] || [ "${ext}" = 'tbz' ]; then
-        tar -xjf "${1}";
-    elif [ "${ext}" = 'xz' ] || [ "${ext}" = 'txz' ]; then
-        tar -xJf "${1}";
-    elif [ "${ext}" = 'tar' ]; then
-        tar -xf "${1}";
-    else
-        printf 'extract(): An error occurred.\n';
-    fi;
-    if [ "${?}" -eq 0 ]; then
+    if                                                                        \
+        if [ "${ext}" = 'gz' ] || [ "${ext}" = 'tgz' ]; then
+            tar -xzf "${1}";
+        elif [ "${ext}" = 'bz2' ] || [ "${ext}" = 'tbz' ]; then
+            tar -xjf "${1}";
+        elif [ "${ext}" = 'xz' ] || [ "${ext}" = 'txz' ]; then
+            tar -xJf "${1}";
+        elif [ "${ext}" = 'tar' ]; then
+            tar -xf "${1}";
+        else
+            printf 'extract(): An error occurred.\n';
+        fi; then
         rm -f "${1}";
     fi;
-    unset ext
+    unset ext;
 }
 build_package_from_source() {
     if [ -z "${2}" ]; then
@@ -63,7 +48,8 @@ build_package_from_source() {
         printf 'build_package_from_source(): %s No such directory.\n' "${1}";
         return 1;
     fi;
-    pushd "${1}";
+    old_pwd="$(pwd)";
+    cd "${1}" || exit;
     if [ ! -d "${2}" ]; then
         rm -rf "${2}";
         mkdir -p "${2}";
@@ -83,7 +69,8 @@ build_package_from_source() {
         return 1;
     fi;
     sudo make -s install 1>/dev/null 2>&1;
-    popd;
+    cd "${old_pwd}" || exit;
+    unset old_pwd;
 }
 install_from_source() {
     TARBALLS='
@@ -94,16 +81,17 @@ install_from_source() {
         autoconf-2.69
         coreutils-8.27
     '
-    pushd dependencies/build;
+    old_pwd="$(pwd)";
+    cd dependencies/build || exit;
     for tarball in ${TARBALLS}; do
         extract "${tarball}";
     done;
-    popd
-    for sourcedir in ${SOURCEDIRS}; do
-        build_package_from_source './dependencies/build/'"${sourcedir}"       \
-            '/usr/local'
-    done;
-    if [ "${?}" -eq 0 ]; then
+    cd "${old_pwd}" || exit;
+    if                                                                        \
+        for sourcedir in ${SOURCEDIRS}; do
+            build_package_from_source './dependencies/build/'"${sourcedir}"   \
+                '/usr/local'
+        done; then
         export OLD_PATH="${PATH}";
         export PATH='/usr/local/bin:'"${PATH}";
         export OLD_LIBRARY_PATH="${LIBRARY_PATH}";
@@ -111,8 +99,7 @@ install_from_source() {
         export OLD_CPATH="${CPATH}";
         export CPATH='/usr/local/include:/usr/include';
     fi;
-    unset TARBALLS;
-    unset SOURCEDIRS;
+    unset old_pwd SOURCEDIRS TARBALLS;
 }
 
 prepare_dependencies_dir;

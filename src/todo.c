@@ -34,7 +34,8 @@ static int Current_item_in_malloced_text = 0;
 static const char *Dump_filename = "dumpfile.txt";
 #else
 /* TODO: Make this a command-line option. */
-static const char *Dump_filename = "/home/strupo/.cache/todo/dumpfile.txt";
+/* TODO: Make it possible to read this from a config file */
+static const char *Dump_filename = "/d1/home/strupo/.cache/todo/dumpfile.txt";
 #endif /* DEBUG */
 
 static void todo_list_print_internal(todo_list *list_item, int n);

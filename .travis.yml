@@ -7,7 +7,7 @@ before_install:
     - . ./.travis_before_install.sh
 install: true
 before_script: touch dumpfile.txt
-script: autoreconf -iv && ./configure CFLAGS='-O3 DDEBUG=1 -Wall -Wextra -std=c99 -pedantic' && make && sudo make install
+script: autoreconf -iv && ./configure 'CFLAGS=-O3 -DDEBUG=1 -ansi' && make && sudo make install
 after_success:
     - todo Test\ todo
     - todo -t 0

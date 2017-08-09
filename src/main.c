@@ -110,7 +110,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "todo_list_dump_to_file() returned 2.\nWriting the UTF"
                 "-8 BOM failed.\n");
 
-    todo_list_destroy();
+    todo_list_destroy_v2();
 
     exit(EXIT_SUCCESS);
 }

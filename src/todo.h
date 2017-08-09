@@ -63,6 +63,8 @@ void todo_list_print_one_item(todo_list *item, int n);
 
 void todo_list_destroy(void);
 
+void todo_list_destroy_v2(void);
+
 void todo_list_done(todo_list *item);
 
 int todo_list_dump_to_file(void);

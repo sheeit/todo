@@ -1,2 +1,2 @@
 bin_PROGRAMS	= todo
-todo_SOURCES	= todo.h todo.c main.c
+todo_SOURCES	= main.c todo.c todo.h get_dumpfile.c get_dumpfile.h

@@ -17,12 +17,16 @@
 
 
 #define _POSIX_C_SOURCE (201704L)
+
+
+#include "get_dumpfile.h"
+#include "todo.h"
+
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 
-#include "todo.h"
 
 static todo_list *First = NULL;
 static todo_list *Last = NULL;
@@ -30,14 +34,6 @@ static todo_list *Malloced_array[MAX_ITEMS] = {NULL};
 static int Current_item_in_malloced_array = 0;
 static char *Malloced_text[MAX_ITEMS] = {NULL};
 static int Current_item_in_malloced_text = 0;
-#if (defined(DEBUG) && DEBUG) || defined(WIN32)
-static const char *Dump_filename = "dumpfile.txt";
-#else
-/* TODO: Make this a command-line option. */
-/* TODO: Make it possible to read this from a config file */
-static const char *Dump_filename = "/d1/home/strupo/.cache/todo/dumpfile.txt";
-#endif /* DEBUG */
-
 static void todo_list_print_internal(todo_list *list_item, int n);
 static void todo_list_dump_file_internal(todo_list *item, FILE *dumpfile);
 static todo_list *todo_list_get_nth_item_internal(todo_list *item,
@@ -147,6 +143,7 @@ void do_nothing(void)
 
 int todo_list_dump_to_file(void)
 {
+    const char *const Dump_filename = get_dumpfile_path();
     FILE *dumpfile;
     unsigned char * const utf8_bom = (unsigned char *) malloc((size_t) 0x1ALU);
     int ret = 0;
@@ -216,6 +213,7 @@ void todo_list_done(todo_list *item)
 
 int todo_list_read_dump_file(void)
 {
+    const char *const Dump_filename = get_dumpfile_path();
     FILE *dumpfile;
     char line[MAX_LINE] = {'\0'};
     size_t len;

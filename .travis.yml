@@ -6,7 +6,7 @@ before_install:
     - sudo apt-get install automake autotools-dev diffutils help2man gawk
     - . ./.travis_before_install.sh
 install: true
-before_script: touch dumpfile.txt
+before_script: touch ~/.todo_dumpfile
 script: autoreconf -iv && ./configure 'CFLAGS=-O3 -DDEBUG=1 -ansi' && make && sudo make install
 after_success:
     - todo Test\ todo

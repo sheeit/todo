@@ -56,7 +56,9 @@ char *get_dumpfile_path(void)
     strncpy(Dumpfile, home, homelen + 1);
     strncat(Dumpfile, Dumpfile_location, additional_chars);
 
+#if defined(DEBUG) && DEBUG
     printf("Your dumpfile is %s\n", Dumpfile);
+#endif /* defined(DEBUG) && DEBUG */
 
     return Dumpfile;
 }

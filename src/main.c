@@ -16,13 +16,13 @@
  */
 
 
+#include "../config.h"
+#include "todo.h"
+
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <string.h>
-
-#include "todo.h"
-#include "../config.h"
 
 void check_for_v(int argc, const char * const *argv);
 

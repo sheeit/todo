@@ -57,7 +57,7 @@ todo_list *todo_list_add(const char *text)
     ++Current_item_in_malloced_array;
 
     item->done = false;
-    item->text = text;
+    item->text = strndup(text, (1 << 10));
     item->next = NULL;
     if (Last) {
         Last->next = item;
@@ -375,11 +375,31 @@ void todo_list_print_nth_item(int itemnum)
 
 void todo_list_remove_nth_item(int itemnum)
 {
-    /* TODO */
+    todo_list *prev;
+    todo_list *item;
 
-    /* This is just so the this would compile with -Wall -Wextra */
-    if (itemnum)
-        do_nothing();
+    if (itemnum == 0) {
+        item = First;
+        if (item) {
+            First = item->next;
+            free((void *) item->text);
+            free((void *) item);
+            if (First == Last)
+                Last = NULL;
+        }
+    } else {
+        prev = todo_list_get_nth_item(itemnum - 1);
+        item = prev->next;
+
+        if (item) {
+            prev->next = item->next;
+            free((void *) item->text);
+            free((void *) item);
+            if (item == Last) {
+                Last = prev;
+            }
+        }
+    }
 
     return;
 }

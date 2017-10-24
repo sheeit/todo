@@ -87,8 +87,8 @@ void todo_list_print_one_item(todo_list *item, int n)
     const char *color_end = "\033[0m";
 #endif /* NO_COLORS */
 #if defined(USE_PLAIN_ASCII) && USE_PLAIN_ASCII
-    const char *done = "x";
-    const char *undone = "x";
+    const char *done = "+";
+    const char *undone = "-";
 #else
     const char *done = "\xE2\x9C\x93";
     const char *undone = "\xE2\x9C\x97";

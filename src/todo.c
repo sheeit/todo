@@ -16,7 +16,8 @@
  */
 
 
-#define _POSIX_C_SOURCE (201704L)
+/* For strndup() */
+#define _POSIX_C_SOURCE (201802L)
 
 
 #include "get_dumpfile.h"
@@ -30,10 +31,6 @@
 
 static todo_list *First = NULL;
 static todo_list *Last = NULL;
-static todo_list *Malloced_array[MAX_ITEMS] = {NULL};
-static int Current_item_in_malloced_array = 0;
-static char *Malloced_text[MAX_ITEMS] = {NULL};
-static int Current_item_in_malloced_text = 0;
 static void todo_list_print_internal(todo_list *list_item, int n);
 static void todo_list_dump_file_internal(todo_list *item, FILE *dumpfile);
 static todo_list *todo_list_get_nth_item_internal(todo_list *item,
@@ -44,30 +41,23 @@ static void todo_list_destroy_v2_internal(todo_list *item);
 
 todo_list *todo_list_add(const char *text)
 {
-    todo_list *item;
-    if (Current_item_in_malloced_array >= MAX_ITEMS - 1)
-        return NULL;
+    todo_list *item = (todo_list *) malloc(sizeof(todo_list));
 
-    item = (todo_list *) malloc(sizeof(todo_list));
     if (item == NULL) {
         fprintf(stderr, "todo_list_add(): malloc() failed\n");
         return NULL;
     }
-    Malloced_array[Current_item_in_malloced_array] = item;
-    ++Current_item_in_malloced_array;
 
     item->done = false;
     item->text = strndup(text, (1 << 10));
     item->next = NULL;
-    if (Last) {
+    if (Last)
         Last->next = item;
-    }
     Last = item;
 
-    if (First == NULL) {
+    if (First == NULL)
         /* Make this one the first */
         First = item;
-    }
 
     return item;
 }
@@ -119,19 +109,6 @@ static void todo_list_print_internal(todo_list *list_item, int n)
 
     if (list_item != Last)
         todo_list_print_internal(list_item->next, n + 1);
-
-    return;
-}
-
-void todo_list_destroy(void)
-{
-    int i;
-
-    for (i = 0; i < Current_item_in_malloced_array; ++i)
-        free((void *) (Malloced_array[i]));
-
-    for (i = 0; i < Current_item_in_malloced_text; ++i)
-        free((void *) (Malloced_text[i]));
 
     return;
 }
@@ -292,9 +269,6 @@ int todo_list_read_dump_file(void)
 
             strncpy(text, &line[4], len);
 
-            Malloced_text[Current_item_in_malloced_text] = text;
-            ++Current_item_in_malloced_text;
-
             this_item = todo_list_add(text);
             if (done)
                 todo_list_done(this_item);
@@ -308,14 +282,15 @@ int todo_list_read_dump_file(void)
 
 static size_t chomp(char *str)
 {
-    size_t len;
+    size_t len = strlen(str);
+    int i = (int) len;
 
-    for (len = 0; str[len] != '\n'; ++len)
-        continue;
+    while (i > 0 && str[i - 1] == '\n') {
+        --i;
+        str[i] = '\0';
+    }
 
-    str[len] = '\0';
-
-    return len;
+    return len - i;
 }
 
 todo_list *todo_list_get_nth_item(int itemnum)
@@ -386,10 +361,12 @@ void todo_list_remove_nth_item(int itemnum)
             free((void *) item);
             if (First == Last)
                 Last = NULL;
+        } else {
+            fputs("No such item.\n", stderr);
         }
     } else {
         prev = todo_list_get_nth_item(itemnum - 1);
-        item = prev->next;
+        item = prev ? prev->next : NULL;
 
         if (item) {
             prev->next = item->next;
@@ -398,6 +375,8 @@ void todo_list_remove_nth_item(int itemnum)
             if (item == Last) {
                 Last = prev;
             }
+        } else {
+            fputs("No such item.\n", stderr);
         }
     }
 

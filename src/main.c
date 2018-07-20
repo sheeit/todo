@@ -33,6 +33,7 @@ int main(int argc, char **argv)
     bool ignore = false;
     bool print_all = true;
     todo_list *last_item = NULL;
+    int errors = 0;
 
     check_for_v(argc - 1, (const char * const *) argv + 1);
 
@@ -61,6 +62,7 @@ int main(int argc, char **argv)
             } else if (argv[i][1] == 'n') {
                 /* Do nothing; it's already marked as undone. */;
             } else {
+                ++errors;
                 fprintf(stderr, "Unknown option %c\n", argv[i][1]);
             }
         } else {
@@ -75,12 +77,15 @@ int main(int argc, char **argv)
                     char *endptr = NULL;
                     ignore = true;
                     item_to_process = (int) strtol(argv[i + 1], &endptr, 10);
-                    if (*endptr != '\0')
+                    if (*endptr != '\0') {
+                        ++errors;
                         fprintf(stderr, "Error: %s doesn't appear to be a vali"
                                 "id integer.\n", argv[i + 1]);
-                    else
+                    } else {
                         todo_list_remove_nth_item(item_to_process);
+                    }
                 } else {
+                    ++errors;
                     fprintf(stderr, "Usage: %s -r n\nTo remove the nth item (n"
                             " is an int)\n", argv[0]);
                 }
@@ -90,12 +95,15 @@ int main(int argc, char **argv)
                     char *endptr = NULL;
                     ignore = true;
                     item_to_process = (int) strtol(argv[i + 1], &endptr, 10);
-                    if (*endptr != '\0')
+                    if (*endptr != '\0') {
+                        ++errors;
                         fprintf(stderr, "Error: %s doesn't appear to be a vali"
                                 "id integer.\n", argv[i + 1]);
-                    else
+                    } else {
                         todo_list_toggle_done(item_to_process);
+                    }
                 } else {
+                    ++errors;
                     fprintf(stderr, "Usage: %s -t n\nTo toggle the 'done' flag"
                             " of the nth item (n is an int)\n", argv[0]);
                 }
@@ -103,16 +111,18 @@ int main(int argc, char **argv)
         }
     }
 
-    if (print_all)
+    if (print_all && !errors)
         todo_list_print();
 
-    if (todo_list_dump_to_file() == 2)
+    if (todo_list_dump_to_file() == 2) {
+        ++errors;
         fprintf(stderr, "todo_list_dump_to_file() returned 2.\nWriting the UTF"
                 "-8 BOM failed.\n");
+    }
 
     todo_list_destroy_v2();
 
-    exit(EXIT_SUCCESS);
+    exit(!errors ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
 void check_for_v(int argc, const char * const *argv)

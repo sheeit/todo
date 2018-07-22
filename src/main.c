@@ -49,70 +49,93 @@ int main(int argc, char **argv)
      * and in an elegant way. This right here is shit.
      */
     for (i = 1; i < argc; ++i) {
+
         if (ignore) {
             ignore = false;
             continue;
         }
+
         if (argv[i][0] != '-') {
             last_item = todo_list_add(argv[i]);
+            print_all = false;
         } else if (i > 1) {
             /* argv[i][0] == '-' */
             if (argv[i][1] == 'y') {
                 todo_list_done(last_item);
             } else if (argv[i][1] == 'n') {
-                /* Do nothing; it's already marked as undone. */;
+                /* Do nothing; it's already marked as undone. */
+                ;
             } else {
                 ++errors;
                 fprintf(stderr, "Unknown option %c\n", argv[i][1]);
             }
         } else {
-            /* argv[i][0] == '-' */
+            /* argv[i][0] == '-' && i == 1 */
+
             if (isdigit(argv[i][1])) {
                 item_to_process = atoi(*(argv + i) + 1);
                 print_all = false;
                 todo_list_print_nth_item(item_to_process);
-            } else if (argv[i][1] == 'r') {
-                /* r == remove */
-                if (i + 1 < argc) {
-                    char *endptr = NULL;
-                    ignore = true;
-                    item_to_process = (int) strtol(argv[i + 1], &endptr, 10);
-                    if (*endptr != '\0') {
-                        ++errors;
-                        fprintf(stderr, "Error: %s doesn't appear to be a vali"
-                                "id integer.\n", argv[i + 1]);
+
+            } else {
+
+                switch (argv[i][1]) {
+
+                case 'r': /* r == remove */
+                    if (i + 1 < argc) {
+                        char *endptr = NULL;
+                        ignore = true;
+                        item_to_process
+                            = (int) strtol(argv[i + 1], &endptr, 10);
+                        if (endptr == argv[i + 1] || *endptr != '\0') {
+                            ++errors;
+                            fprintf(stderr, "Error: %s doesn't appear to be "
+                                    "a valiid integer.\n",
+                                    argv[i + 1]);
+                        } else {
+                            todo_list_remove_nth_item(item_to_process);
+                        }
                     } else {
-                        todo_list_remove_nth_item(item_to_process);
-                    }
-                } else {
-                    ++errors;
-                    fprintf(stderr, "Usage: %s -r n\nTo remove the nth item (n"
-                            " is an int)\n", argv[0]);
-                }
-            } else if (argv[i][1] == 't') {
-                /* t == toggle_done */
-                if (i + 1 < argc) {
-                    char *endptr = NULL;
-                    ignore = true;
-                    item_to_process = (int) strtol(argv[i + 1], &endptr, 10);
-                    if (*endptr != '\0') {
                         ++errors;
-                        fprintf(stderr, "Error: %s doesn't appear to be a vali"
-                                "id integer.\n", argv[i + 1]);
-                    } else {
-                        todo_list_toggle_done(item_to_process);
+                        fprintf(stderr, "Usage: %s -r n\nTo remove the nth item (n"
+                                " is an int)\n", argv[0]);
                     }
-                } else {
-                    ++errors;
-                    fprintf(stderr, "Usage: %s -t n\nTo toggle the 'done' flag"
-                            " of the nth item (n is an int)\n", argv[0]);
+                    break;
+
+                case 't': /* t == toggle_done */
+                    if (i + 1 < argc) {
+                        char *endptr = NULL;
+                        ignore = true;
+                        item_to_process =
+                            (int) strtol(argv[i + 1], &endptr, 10);
+                        if (endptr == argv[i + 1] || *endptr != '\0') {
+                            ++errors;
+                            fprintf(stderr, "Error: %s doesn't appear to be "
+                                    "a valiid integer.\n",
+                                    argv[i + 1]);
+                        } else {
+                            todo_list_toggle_done(item_to_process);
+                        }
+                    } else {
+                        ++errors;
+                        fprintf(stderr, "Usage: %s -t n\nTo toggle the 'done' flag"
+                                " of the nth item (n is an int)\n", argv[0]);
+                    }
+                    break;
+
                 }
+
             }
+
         }
+
     }
 
-    if (print_all && !errors)
+    if (print_all && !errors) {
         todo_list_print();
+    } else if (last_item) {
+        todo_list_print_item(last_item);
+    }
 
     if (todo_list_dump_to_file() == 2) {
         ++errors;

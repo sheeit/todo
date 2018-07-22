@@ -17,8 +17,7 @@
 
 
 /* For strndup() */
-#define _POSIX_C_SOURCE (201802L)
-
+#define _POSIX_C_SOURCE (200809L)
 
 #include "get_dumpfile.h"
 #include "todo.h"
@@ -37,6 +36,8 @@ static todo_list *todo_list_get_nth_item_internal(todo_list *item,
         int itemnum);
 static size_t chomp(char *str);
 static void todo_list_destroy_v2_internal(todo_list *item);
+static int todo_list_get_itemnum_internal(const todo_list *p,
+        const todo_list *item, int itemnum);
 
 
 todo_list *todo_list_add(const char *text)
@@ -381,4 +382,31 @@ void todo_list_remove_nth_item(int itemnum)
     }
 
     return;
+}
+
+void todo_list_print_item(const todo_list *item)
+{
+    todo_list_print_one_item(item, todo_list_get_itemnum(item));
+
+    return;
+}
+
+int todo_list_get_itemnum(const todo_list *item)
+{
+    if (!First || !item)
+        return -1;
+
+    return todo_list_get_itemnum_internal(First, item, 0);
+}
+
+static int todo_list_get_itemnum_internal(const todo_list *p,
+        const todo_list *item, int itemnum)
+{
+    if (!p)
+        return -1;
+
+    if (p == item)
+        return itemnum;
+
+    return todo_list_get_itemnum_internal(p->next, item, itemnum + 1);
 }

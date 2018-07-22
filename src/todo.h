@@ -79,5 +79,9 @@ void todo_list_print_nth_item(int itemnum);
 
 void todo_list_remove_nth_item(int itemnum);
 
+void todo_list_print_item(const todo_list *item);
+
+int todo_list_get_itemnum(const todo_list *item);
+
 
 #endif /* TODO_H */

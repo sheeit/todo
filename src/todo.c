@@ -28,9 +28,12 @@
 #include <string.h>
 
 
+#define PRINT_UNDONE    (1 << 0)
+#define PRINT_DONE      (1 << 1)
+
 static todo_list *First = NULL;
 static todo_list *Last = NULL;
-static void todo_list_print_internal(todo_list *list_item, int n);
+static void todo_list_print_internal(todo_list *list_item, int n, char done);
 static void todo_list_dump_file_internal(todo_list *item, FILE *dumpfile);
 static todo_list *todo_list_get_nth_item_internal(todo_list *item,
         int itemnum);
@@ -63,7 +66,7 @@ todo_list *todo_list_add(const char *text)
     return item;
 }
 
-void todo_list_print_one_item(todo_list *item, int n)
+void todo_list_print_one_item(const todo_list *item, int n)
 {
     const char printf_string[] = "%s%2d%s [%s%s%s] %s\n";
 #if defined(NO_COLORS) && NO_COLORS
@@ -99,17 +102,34 @@ void todo_list_print_one_item(todo_list *item, int n)
 void todo_list_print(void)
 {
     if (First)
-        todo_list_print_internal(First, 0);
+        todo_list_print_internal(First, 0, PRINT_DONE | PRINT_UNDONE);
 
     return;
 }
 
-static void todo_list_print_internal(todo_list *list_item, int n)
+void todo_list_print_done(void)
 {
-    todo_list_print_one_item(list_item, n);
+    if (First)
+        todo_list_print_internal(First, 0, PRINT_DONE);
+
+    return;
+}
+void todo_list_print_undone(void)
+{
+    if (First)
+        todo_list_print_internal(First, 0, PRINT_UNDONE);
+
+    return;
+}
+
+static void todo_list_print_internal(todo_list *list_item, int n, char done)
+{
+    if ((list_item->done == true && (done & PRINT_DONE))
+        || (list_item->done == false && (done & PRINT_UNDONE)))
+        todo_list_print_one_item(list_item, n);
 
     if (list_item != Last)
-        todo_list_print_internal(list_item->next, n + 1);
+        todo_list_print_internal(list_item->next, n + 1, done);
 
     return;
 }

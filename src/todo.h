@@ -58,8 +58,10 @@ void do_nothing(void);
 todo_list *todo_list_add(const char *text);
 
 void todo_list_print(void);
+void todo_list_print_done(void);
+void todo_list_print_undone(void);
 
-void todo_list_print_one_item(todo_list *item, int n);
+void todo_list_print_one_item(const todo_list *item, int n);
 
 void todo_list_destroy(void);
 

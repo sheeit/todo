@@ -67,7 +67,8 @@ int main(int argc, char **argv)
                 ;
             } else {
                 ++errors;
-                fprintf(stderr, "Unknown option %c\n", argv[i][1]);
+                fprintf(stderr, "%s: no such option: -%c\n",
+                    argv[i][1], argv[0]);
             }
         } else {
             /* argv[i][0] == '-' && i == 1 */
@@ -90,15 +91,16 @@ int main(int argc, char **argv)
                         if (endptr == argv[i + 1] || *endptr != '\0') {
                             ++errors;
                             fprintf(stderr, "Error: %s doesn't appear to be "
-                                    "a valiid integer.\n",
-                                    argv[i + 1]);
+                                "a valid integer.\n",
+                                argv[i + 1]);
                         } else {
                             todo_list_remove_nth_item(item_to_process);
                         }
                     } else {
                         ++errors;
-                        fprintf(stderr, "Usage: %s -r n\nTo remove the nth item (n"
-                                " is an int)\n", argv[0]);
+                        fprintf(stderr, "Usage: %s -r itemnum\n"
+                            "Remove the item number itemnum.\n",
+                            argv[0]);
                     }
                     break;
 
@@ -111,16 +113,34 @@ int main(int argc, char **argv)
                         if (endptr == argv[i + 1] || *endptr != '\0') {
                             ++errors;
                             fprintf(stderr, "Error: %s doesn't appear to be "
-                                    "a valiid integer.\n",
-                                    argv[i + 1]);
+                                "a valid integer.\n",
+                                argv[i + 1]);
                         } else {
                             todo_list_toggle_done(item_to_process);
                         }
                     } else {
                         ++errors;
-                        fprintf(stderr, "Usage: %s -t n\nTo toggle the 'done' flag"
-                                " of the nth item (n is an int)\n", argv[0]);
+                        fprintf(stderr, "Usage: %s -t itemnum\n"
+                            "Mark the item number itemnum as done "
+                            "or undone (toggle its 'done' state).\n",
+                            argv[0]);
                     }
+                    break;
+
+                case 'd': /* t == list_done */
+                    print_all = false;
+                    todo_list_print_done();
+                    break;
+
+                case 'u': /* u == list_undone */
+                    print_all = false;
+                    todo_list_print_undone();
+                    break;
+
+                default:
+                    ++errors;
+                    fprintf(stderr, "%s: no such option: -%c\n",
+                        argv[0], argv[i][1]);
                     break;
 
                 }
@@ -131,18 +151,21 @@ int main(int argc, char **argv)
 
     }
 
-    if (print_all && !errors) {
+    if (errors)
+        goto quit;
+
+    if (print_all)
         todo_list_print();
-    } else if (last_item) {
+    else if (last_item)
         todo_list_print_item(last_item);
-    }
 
     if (todo_list_dump_to_file() == 2) {
         ++errors;
-        fprintf(stderr, "todo_list_dump_to_file() returned 2.\nWriting the UTF"
-                "-8 BOM failed.\n");
+        fprintf(stderr, "todo_list_dump_to_file() returned 2.\n"
+            "Writing the UTF-8 BOM failed.\n");
     }
 
+quit:
     todo_list_destroy_v2();
 
     exit(!errors ? EXIT_SUCCESS : EXIT_FAILURE);

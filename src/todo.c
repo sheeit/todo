@@ -33,14 +33,12 @@
 
 static todo_list *First = NULL;
 static todo_list *Last = NULL;
-static void todo_list_print_internal(todo_list *list_item, int n, char done);
+static void todo_list_print_internal(todo_list *list_item, char done);
 static void todo_list_dump_file_internal(todo_list *item, FILE *dumpfile);
 static todo_list *todo_list_get_nth_item_internal(todo_list *item,
-        int itemnum);
+        const unsigned itemnum);
 static size_t chomp(char *str);
 static void todo_list_destroy_v2_internal(todo_list *item);
-static int todo_list_get_itemnum_internal(const todo_list *p,
-        const todo_list *item, int itemnum);
 
 
 todo_list *todo_list_add(const char *text)
@@ -55,8 +53,12 @@ todo_list *todo_list_add(const char *text)
     item->done = false;
     item->text = strndup(text, (1 << 10));
     item->next = NULL;
-    if (Last)
+    if (Last) {
         Last->next = item;
+        item->number = Last->number + 1;
+    } else {
+        item->number = 0;
+    }
     Last = item;
 
     if (First == NULL)
@@ -66,7 +68,7 @@ todo_list *todo_list_add(const char *text)
     return item;
 }
 
-void todo_list_print_one_item(const todo_list *item, int n)
+void todo_list_print_one_item(const todo_list *item)
 {
     const char printf_string[] = "%s%2d%s [%s%s%s] %s\n";
 #if defined(NO_COLORS) && NO_COLORS
@@ -90,7 +92,7 @@ void todo_list_print_one_item(const todo_list *item, int n)
 
     if (item)
         printf(printf_string,
-                color_1, n, color_end,
+                color_1, item->number, color_end,
                 item->done ? color_3 : color_2,
                     item->done ? done : undone,
                 color_end,
@@ -102,7 +104,7 @@ void todo_list_print_one_item(const todo_list *item, int n)
 void todo_list_print(void)
 {
     if (First)
-        todo_list_print_internal(First, 0, PRINT_DONE | PRINT_UNDONE);
+        todo_list_print_internal(First, PRINT_DONE | PRINT_UNDONE);
 
     return;
 }
@@ -110,26 +112,26 @@ void todo_list_print(void)
 void todo_list_print_done(void)
 {
     if (First)
-        todo_list_print_internal(First, 0, PRINT_DONE);
+        todo_list_print_internal(First, PRINT_DONE);
 
     return;
 }
 void todo_list_print_undone(void)
 {
     if (First)
-        todo_list_print_internal(First, 0, PRINT_UNDONE);
+        todo_list_print_internal(First, PRINT_UNDONE);
 
     return;
 }
 
-static void todo_list_print_internal(todo_list *list_item, int n, char done)
+static void todo_list_print_internal(todo_list *list_item, char done)
 {
     if ((list_item->done == true && (done & PRINT_DONE))
         || (list_item->done == false && (done & PRINT_UNDONE)))
-        todo_list_print_one_item(list_item, n);
+        todo_list_print_one_item(list_item);
 
     if (list_item != Last)
-        todo_list_print_internal(list_item->next, n + 1, done);
+        todo_list_print_internal(list_item->next, done);
 
     return;
 }
@@ -183,14 +185,14 @@ int todo_list_dump_to_file(void)
 {
     const char *const Dump_filename = get_dumpfile_path();
     FILE *dumpfile;
-    unsigned char * const utf8_bom = (unsigned char *) malloc((size_t) 0x1ALU);
+    unsigned char utf8_bom[0x1B] = { 0 };
+    const size_t utf8_bom_size = sizeof utf8_bom / sizeof utf8_bom[0];
     int ret = 0;
 
     dumpfile = fopen(Dump_filename, "w");
     if (dumpfile == NULL) {
         fprintf(stderr, "todo_list_dump_to_file(): Unable to open dumpfile %s "
                 "for writing.\n", Dump_filename);
-        free(utf8_bom);
         return 1;
     }
 
@@ -219,10 +221,7 @@ int todo_list_dump_to_file(void)
     utf8_bom[0x19] = (unsigned char) '.';
     utf8_bom[0x1A] = (unsigned char) '\n';
 
-    ret = (fwrite(utf8_bom, 1, (size_t) 0x1BLU, dumpfile) == (size_t) 0x1BLU)
-            ? 0 : 2;
-
-    free((void *) utf8_bom);
+    ret = !(fwrite(utf8_bom, 1, utf8_bom_size, dumpfile) == utf8_bom_size) * 2;
 
     if (First != NULL)
         todo_list_dump_file_internal(First, dumpfile);
@@ -314,14 +313,18 @@ static size_t chomp(char *str)
     return len - i;
 }
 
-todo_list *todo_list_get_nth_item(int itemnum)
+todo_list *todo_list_get_nth_item(long itemnum)
 {
     todo_list *item = NULL;
-    if (First)
-        item = todo_list_get_nth_item_internal(First, itemnum);
+
+    if (First) {
+        const long last = Last->number + 1;
+        const unsigned number = ((itemnum % last) + last) % last;
+        item = todo_list_get_nth_item_internal(First, number);
+    }
 
     if (!item)
-        fprintf(stderr, "todo_list_get_nth_item(): Can't find the %d%s item."
+        fprintf(stderr, "todo_list_get_nth_item(): Can't find the %ld%s item."
                 "\n", itemnum,
                 (itemnum == 11
                 || itemnum == 12
@@ -334,21 +337,19 @@ todo_list *todo_list_get_nth_item(int itemnum)
     return item;
 }
 
-static todo_list *todo_list_get_nth_item_internal(todo_list *item, int itemnum)
+static todo_list *todo_list_get_nth_item_internal(todo_list *item,
+        const unsigned itemnum)
 {
-    todo_list *nth_item = NULL;
-
     if (!item)
-        nth_item = NULL;
-    else if (itemnum == 0)
-        nth_item = item;
-    else
-        nth_item = todo_list_get_nth_item_internal(item->next, itemnum - 1);
+        return NULL;
 
-    return nth_item;
+    if (item->number == itemnum)
+        return item;
+
+    return todo_list_get_nth_item_internal(item->next, itemnum);
 }
 
-void todo_list_toggle_done(int itemnum)
+void todo_list_toggle_done(unsigned itemnum)
 {
     todo_list *item = todo_list_get_nth_item(itemnum);
 
@@ -359,16 +360,17 @@ void todo_list_toggle_done(int itemnum)
     return;
 }
 
-void todo_list_print_nth_item(int itemnum)
+void todo_list_print_nth_item(long itemnum)
 {
     todo_list *item = todo_list_get_nth_item(itemnum);
 
     if (item)
-        todo_list_print_one_item(item, itemnum);
+        todo_list_print_one_item(item);
 
     return;
 }
 
+/* TODO: Check if it still works, and rewrite it to use item->number */
 void todo_list_remove_nth_item(int itemnum)
 {
     todo_list *prev;
@@ -406,27 +408,7 @@ void todo_list_remove_nth_item(int itemnum)
 
 void todo_list_print_item(const todo_list *item)
 {
-    todo_list_print_one_item(item, todo_list_get_itemnum(item));
+    todo_list_print_one_item(item);
 
     return;
-}
-
-int todo_list_get_itemnum(const todo_list *item)
-{
-    if (!First || !item)
-        return -1;
-
-    return todo_list_get_itemnum_internal(First, item, 0);
-}
-
-static int todo_list_get_itemnum_internal(const todo_list *p,
-        const todo_list *item, int itemnum)
-{
-    if (!p)
-        return -1;
-
-    if (p == item)
-        return itemnum;
-
-    return todo_list_get_itemnum_internal(p->next, item, itemnum + 1);
 }

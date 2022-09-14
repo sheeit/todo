@@ -40,6 +40,7 @@
 struct todo_list {
     const char *text;
     bool done;
+    unsigned int number;
     struct todo_list *next;
 };
 
@@ -61,7 +62,7 @@ void todo_list_print(void);
 void todo_list_print_done(void);
 void todo_list_print_undone(void);
 
-void todo_list_print_one_item(const todo_list *item, int n);
+void todo_list_print_one_item(const todo_list *item);
 
 void todo_list_destroy(void);
 
@@ -73,11 +74,11 @@ int todo_list_dump_to_file(void);
 
 int todo_list_read_dump_file(void);
 
-void todo_list_toggle_done(int itemnum);
+void todo_list_toggle_done(unsigned itemnum);
 
-todo_list *todo_list_get_nth_item(int itemnum);
+todo_list *todo_list_get_nth_item(long itemnum);
 
-void todo_list_print_nth_item(int itemnum);
+void todo_list_print_nth_item(long itemnum);
 
 void todo_list_remove_nth_item(int itemnum);
 

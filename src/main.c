@@ -61,21 +61,28 @@ int main(int argc, char **argv)
         } else if (i > 1) {
             /* argv[i][0] == '-' */
             if (argv[i][1] == 'y') {
-                todo_list_done(last_item);
+                if (!last_item) {
+                    fputs("-y can only be used after adding an item.\n",
+                            stderr);
+                    ++errors;
+                } else {
+                    todo_list_done(last_item);
+                }
             } else if (argv[i][1] == 'n') {
                 /* Do nothing; it's already marked as undone. */
                 ;
             } else {
                 ++errors;
                 fprintf(stderr, "%s: no such option: -%c\n",
-                    argv[i][1], argv[0]);
+                    argv[0], argv[i][1]);
             }
         } else {
             /* argv[i][0] == '-' && i == 1 */
+            print_all = false;
 
-            if (isdigit(argv[i][1])) {
-                item_to_process = atoi(*(argv + i) + 1);
-                print_all = false;
+            if (isdigit(argv[i][1])
+                    || (argv[i][1] == '-' && isdigit(argv[i][2]))) {
+                item_to_process = atoi(&argv[i][1]);
                 todo_list_print_nth_item(item_to_process);
 
             } else {
@@ -94,7 +101,9 @@ int main(int argc, char **argv)
                                 "a valid integer.\n",
                                 argv[i + 1]);
                         } else {
+                            todo_list_print_nth_item(item_to_process);
                             todo_list_remove_nth_item(item_to_process);
+                            fprintf(stderr, "Item removed.\n");
                         }
                     } else {
                         ++errors;
@@ -116,6 +125,7 @@ int main(int argc, char **argv)
                                 "a valid integer.\n",
                                 argv[i + 1]);
                         } else {
+                            todo_list_print_nth_item(item_to_process);
                             todo_list_toggle_done(item_to_process);
                         }
                     } else {
@@ -128,12 +138,10 @@ int main(int argc, char **argv)
                     break;
 
                 case 'd': /* t == list_done */
-                    print_all = false;
                     todo_list_print_done();
                     break;
 
                 case 'u': /* u == list_undone */
-                    print_all = false;
                     todo_list_print_undone();
                     break;
 

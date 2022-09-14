@@ -16,7 +16,7 @@ EOF
 fi
 
 CC='gcc'
-CFLAGS='-Wall -Wextra -pedantic-errors -O2 -march=native -mtune=native'
+CFLAGS='-Wall -Wextra -Werror -std=c99 -O2 -march=native -mtune=native -pedantic-errors -ggdb -fsanitize=address -fsanitize=pointer-compare -fsanitize=undefined -fsanitize=leak -ftrapv'
 export CC CFLAGS
 
 test -d build && rm -rf build

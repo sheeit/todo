@@ -53,8 +53,8 @@ char *get_dumpfile_path(void)
         return NULL;
     }
 
-    strncpy(Dumpfile, home, homelen + 1);
-    strncat(Dumpfile, Dumpfile_location, additional_chars);
+    memcpy(Dumpfile, home, homelen);
+    memcpy(Dumpfile + homelen, Dumpfile_location, additional_chars);
 
 #if defined(DEBUG) && DEBUG
     printf("Your dumpfile is %s\n", Dumpfile);

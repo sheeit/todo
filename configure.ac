@@ -1,5 +1,5 @@
 AC_PREREQ([2.69])
-AC_INIT([todo], [0.3], [strupo@autistici.org])
+AC_INIT([todo], [0.4], [strupo@autistici.org])
 AM_INIT_AUTOMAKE([-Wall -Werror -Wportability gnu])
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADERS([config.h])

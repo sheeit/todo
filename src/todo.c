@@ -16,9 +16,6 @@
  */
 
 
-/* For strndup() */
-#define _POSIX_C_SOURCE (200809L)
-
 #include "get_dumpfile.h"
 #include "todo.h"
 
@@ -51,7 +48,7 @@ todo_list *todo_list_add(const char *text)
     }
 
     item->done = false;
-    item->text = strndup(text, (1 << 10));
+    item->text = text;
     item->next = NULL;
     if (Last) {
         Last->next = item;
@@ -143,6 +140,8 @@ void todo_list_destroy_v2(void)
     if (item)
         todo_list_destroy_v2_internal(item);
 
+    free(get_dumpfile_path());
+
     return;
 }
 
@@ -151,33 +150,9 @@ static void todo_list_destroy_v2_internal(todo_list *item)
     if (item->next)
         todo_list_destroy_v2_internal(item->next);
 
-    /* Change this because not all text is malloc'd. Sme of it is literal text.
-     * This issue can be solved by adding another flag, is_mallocd, to mean
-     * that this text is malloc'd and should be freed.
-     * The todo_list_read_dump_file() function produces malloc'd texts, but not
-     * the todo_list_add() function, which just uses the pointer to the string
-     * constant passed to it.
-     * Now that I think of it, a simpler solution would be to just use malloc
-     * for all texts, even those in todo_list_add. Hmmm. I'm gonna need a
-     * function to copy a string literal into a malloc'd string, and do all the
-     * calculating and all of that. This is actually pretty simple, and I'm
-     * like (100 - LDBL_EPSILON)% sure that the standard library provides such
-     * a function, maybe called strdup. But what the hell; I'm doing this to
-     * learn, and not to rely on ready-made functions written by people far
-     * more experienced than me, so being the big boy that I am, I'll do it
-     * myself. What should I call it... I have no idea. I 'm not really good at
-     * naming things, which I'm sure you would have noticed, if you are reading
-     * this. Anyway, comments are for documenting code, not for stories.
-     */
     free((void *) (item->text));
     free(item);
 
-    return;
-}
-
-void do_nothing(void)
-{
-    /* nothing */
     return;
 }
 
@@ -250,7 +225,7 @@ void todo_list_done(todo_list *item)
 
 int todo_list_read_dump_file(void)
 {
-    const char *const Dump_filename = get_dumpfile_path();
+    char *const Dump_filename = get_dumpfile_path();
     FILE *dumpfile;
     char line[MAX_LINE] = {'\0'};
     size_t len;
@@ -259,6 +234,7 @@ int todo_list_read_dump_file(void)
     todo_list *this_item = NULL;
 
     dumpfile = fopen(Dump_filename, "r");
+
     if (dumpfile == NULL) {
         fprintf(stderr, "todo_list_dump_to_file(): Unable to open dumpfile %s "
                 "for reading.\nMaybe it doesn't exist\n", Dump_filename);
@@ -349,7 +325,7 @@ static todo_list *todo_list_get_nth_item_internal(todo_list *item,
     return todo_list_get_nth_item_internal(item->next, itemnum);
 }
 
-void todo_list_toggle_done(unsigned itemnum)
+void todo_list_toggle_done(long itemnum)
 {
     todo_list *item = todo_list_get_nth_item(itemnum);
 

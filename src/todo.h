@@ -74,7 +74,7 @@ int todo_list_dump_to_file(void);
 
 int todo_list_read_dump_file(void);
 
-void todo_list_toggle_done(unsigned itemnum);
+void todo_list_toggle_done(long itemnum);
 
 todo_list *todo_list_get_nth_item(long itemnum);
 

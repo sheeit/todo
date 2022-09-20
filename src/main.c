@@ -16,6 +16,9 @@
  */
 
 
+/* For strdup() */
+#define _POSIX_C_SOURCE (200809L)
+
 #include "../config.h"
 #include "todo.h"
 
@@ -23,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 
 void check_for_v(int argc, const char * const *argv);
 
@@ -56,7 +60,7 @@ int main(int argc, char **argv)
         }
 
         if (argv[i][0] != '-') {
-            last_item = todo_list_add(argv[i]);
+            last_item = todo_list_add(strdup(argv[i]));
             print_all = false;
         } else if (i > 1) {
             /* argv[i][0] == '-' */
@@ -125,8 +129,8 @@ int main(int argc, char **argv)
                                 "a valid integer.\n",
                                 argv[i + 1]);
                         } else {
-                            todo_list_print_nth_item(item_to_process);
                             todo_list_toggle_done(item_to_process);
+                            todo_list_print_nth_item(item_to_process);
                         }
                     } else {
                         ++errors;
